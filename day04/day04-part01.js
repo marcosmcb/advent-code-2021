@@ -1,7 +1,5 @@
 const fs = require('fs');
 
-
-
 const data = fs.readFileSync('input.txt', 'utf8').split("\n");
 
 const drawNumbers = data[0].trim().split(",").map(num => Number(num));
@@ -85,5 +83,5 @@ const winningBoards = drawNumbers.map(drawNumber => {
 
 console.log({
     firstWinningBoard: winningBoards[0],
-    lastWinningBoard: winningBoards.pop()
+    lastWinningBoard: winningBoards[winningBoards.length - 1]
 });
