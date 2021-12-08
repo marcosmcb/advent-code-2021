@@ -1,12 +1,13 @@
 const fs = require('fs');
 
-const data = fs.readFileSync('sample.txt', 'utf8').split(",").map(line => Number(line.trim()));
+const data = fs.readFileSync('input.txt', 'utf8').split(",").map(line => Number(line.trim()));
 
 const differencesMap = {};
 
 const toArray = (num) => [...Array(num).keys()];
 
 const rateDifference = {};
+
 const getDifference = (val, arr) => {
     return arr.map((item) => {
         const difference = Math.abs(item - val);
@@ -30,8 +31,6 @@ data.forEach((_, idx) => {
         smallestKey = idx;
     }
 });
-
-console.log(differencesMap)
 
 console.log({
     smallest,
