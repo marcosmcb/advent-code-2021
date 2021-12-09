@@ -14,29 +14,39 @@ const getMatrixIndexes = (matrix) => {
 
 const { colIndexes, rowIndexes } = getMatrixIndexes(matrix);
 
-const mapLowPoints = {}
-
 const getPosition = (matrix, row, col) => {
-    const { colIndexes, rowIndexes } = getMatrixIndexes(matrix);
-    if (row < 0 || row > rowIndexes.length-1) return 10;
-    if (col < 0 || col > colIndexes.length-1) return 10;
+    if (row < 0 || row > rowIndexes.length - 1) return 10;
+    if (col < 0 || col > colIndexes.length - 1) return 10;
 
     return matrix[row][col];
 }
 
-for (let i=0; i < rowIndexes.length; i++) {
-    for (let j=0; j < colIndexes.length; j++) {
-        const currItem = getPosition(matrix, i, j);
-        const topItem = getPosition(matrix, i-1, j);
-        const rightItem = getPosition(matrix, i, j+1);
-        const bottomIttem = getPosition(matrix, i+1, j);
-        const leftItem = getPosition(matrix, i, j-1);
+const isSmallestPoint = (currItem, adjacentPoints) => {
+    const { topItem, rightItem, bottomItem, leftItem } = adjacentPoints;
+    return currItem < topItem &&
+        currItem < rightItem &&
+        currItem < bottomItem &&
+        currItem < leftItem;
+}
 
-        if (currItem < topItem && currItem < rightItem &&
-            currItem < bottomIttem && currItem < leftItem) {
-                mapLowPoints[i + "" + j] = currItem+1;
-            }
+const getAdjacentPoints = (matrix, i, j) => {
+    return {
+        topItem: getPosition(matrix, i - 1, j),
+        rightItem: getPosition(matrix, i, j + 1),
+        bottomItem: getPosition(matrix, i + 1, j),
+        leftItem: getPosition(matrix, i, j - 1)
     }
 }
 
-console.log(Object.values(mapLowPoints).reduce((sum, val) => sum+val));
+const mapLowPoints = {};
+for (let i = 0; i < rowIndexes.length; i++) {
+    for (let j = 0; j < colIndexes.length; j++) {
+        const currItem = getPosition(matrix, i, j);
+        const adjacentPoints = getAdjacentPoints(matrix, i, j);
+        if (isSmallestPoint(currItem, adjacentPoints)) {
+            mapLowPoints[i + "," + j] = currItem + 1;
+        }
+    }
+}
+const sumTop3 = Object.values(mapLowPoints).reduce((sum, val) => sum + val);
+console.log(sumTop3);

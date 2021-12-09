@@ -14,10 +14,7 @@ const getMatrixIndexes = (matrix) => {
 
 const { colIndexes, rowIndexes } = getMatrixIndexes(matrix);
 
-const mapLowPoints = {}
-
 const getPosition = (matrix, row, col) => {
-    const { colIndexes, rowIndexes } = getMatrixIndexes(matrix);
     if (row < 0 || row > rowIndexes.length - 1) return 10;
     if (col < 0 || col > colIndexes.length - 1) return 10;
 
@@ -41,33 +38,7 @@ const isSmallestPoint = (currItem, adjacentPoints) => {
         currItem < leftItem;
 }
 
-const traverseMatrixNaive = (matrix, row, col, previousItem, basins) => {
-    console.log("traversing following params", {
-        row, col, previousItem, basins
-    });
-    const { colIndexes, rowIndexes } = getMatrixIndexes(matrix);
-    const key = row + "," + col;
-
-    if (row < 0 || row > rowIndexes.length - 1) return 0;
-    if (col < 0 || col > colIndexes.length - 1) return 0;
-
-    const currItem = matrix[row][col];
-
-    if (currItem === 9) return 0; 
-    if (currItem < previousItem) return 0;
-
-    basins[ key ] = 1;
-
-    return traverseMatrixNaive(matrix, row-1, col, currItem, basins) +
-        traverseMatrixNaive(matrix, row, col+1, currItem, basins) +
-        traverseMatrixNaive(matrix, row+1, col, currItem, basins) +
-        traverseMatrixNaive(matrix, row, col-1, currItem, basins);
-}
-
 const traverseMatrix = (matrix, row, col, previousItem, basins) => {
-    // console.log("traversing following params", {
-    //     row, col, previousItem, basins
-    // });
     const key = row + "," + col;
     if (key in basins) {
         return basins[key];
@@ -78,18 +49,18 @@ const traverseMatrix = (matrix, row, col, previousItem, basins) => {
 
     const currItem = matrix[row][col];
 
-    if (currItem === 9) return 0; 
-    if (currItem < previousItem) return 0;
+    if (currItem === 9 || currItem < previousItem) return 0;
 
-    basins[ key ] = 1;
+    basins[key] = 1;
 
-    traverseMatrix(matrix, row-1, col, currItem, basins);
-    traverseMatrix(matrix, row, col+1, currItem, basins);
-    traverseMatrix(matrix, row+1, col, currItem, basins);
-    traverseMatrix(matrix, row, col-1, currItem, basins);
-    return basins [ key ];
+    traverseMatrix(matrix, row - 1, col, currItem, basins);
+    traverseMatrix(matrix, row, col + 1, currItem, basins);
+    traverseMatrix(matrix, row + 1, col, currItem, basins);
+    traverseMatrix(matrix, row, col - 1, currItem, basins);
+    return;
 }
 
+const mapLowPoints = {};
 for (let i = 0; i < rowIndexes.length; i++) {
     for (let j = 0; j < colIndexes.length; j++) {
         const currItem = getPosition(matrix, i, j);
@@ -101,18 +72,22 @@ for (let i = 0; i < rowIndexes.length; i++) {
 }
 
 const basin = {};
-Object.keys(mapLowPoints).map( coordinates => {
-    const splitCoordinates = coordinates.split(",").map(coord => Number(coord));
-    const row = splitCoordinates[0];
-    const col = splitCoordinates[1];
-    // console.log("searching for row and col", row, col);
+Object
+    .keys(mapLowPoints)
+    .forEach(coordinates => {
+        const splitCoordinates = coordinates.split(",").map(coord => Number(coord));
+        const row = splitCoordinates[0];
+        const col = splitCoordinates[1];
 
-    const myBasins = {};
-    traverseMatrix(matrix, row, col, -1, myBasins);
-    console.warn( row + "," + col, Object.keys(myBasins).filter(key => myBasins[key] !== 0).length);
-    basin[row + "," + col] = Object.keys(myBasins).length;
-    // console.log("BASINS", basin[row + "," + col]);
-})
+        const myBasins = {};
+        traverseMatrix(matrix, row, col, -1, myBasins);
+        basin[row + "," + col] = Object.keys(myBasins).length;
+    });
 
-console.log("Values", Object.values(basin))
-console.log("MULT", Object.values(basin).sort((a,b) => b-a).slice(0, 3).reduce((mul, tota) => mul*tota)  );
+const multiplication = Object
+    .values(basin)
+    .sort((a, b) => b - a)
+    .slice(0, 3)
+    .reduce((multi, val) => multi * val);
+
+console.log("MULT", multiplication);
