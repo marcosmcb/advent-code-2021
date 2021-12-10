@@ -18,17 +18,17 @@ const equivalent = {
     '<': '>'
 }
 
-const pushOrPopQueue = (queue, letter) => {
-    const topOfQueue = queue[queue.length - 1];
-    letter === equivalent[topOfQueue] ? queue.pop() : queue.push(letter);
+const pushOrPopStack = (stack, letter) => {
+    const topOfStack = stack[stack.length - 1];
+    letter === equivalent[topOfStack] ? stack.pop() : stack.push(letter);
 }
 
 const corruptsScore = navigationSubsytem
     .map(line => line.trim().split(""))
     .map(line => {
-        const queue = [];
-        line.forEach(letter => pushOrPopQueue(queue, letter));
-        const corrupt = queue.filter(char => !equivalent[char])[0];
+        const stack = [];
+        line.forEach(letter => pushOrPopStack(stack, letter));
+        const corrupt = stack.filter(char => !equivalent[char])[0];
         return corrupt;
     })
     .filter(i => i)

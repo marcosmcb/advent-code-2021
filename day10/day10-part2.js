@@ -28,17 +28,17 @@ const calculatePoints = (complement) => {
     return total;
 }
 
-const pushOrPopQueue = (queue, letter) => {
-    const topOfQueue = queue[queue.length - 1];
-    letter === equivalent[topOfQueue] ? queue.pop() : queue.push(letter);
+const pushOrPopStack = (stack, letter) => {
+    const topOfStack = stack[stack.length - 1];
+    letter === equivalent[topOfStack] ? stack.pop() : stack.push(letter);
 }
 
 const incompleteLines = navigationSubsytem
     .map(line => line.trim().split(""))
     .map(line => {
-        const queue = [];
-        line.forEach(letter => pushOrPopQueue(queue, letter));
-        return queue.filter(char => !equivalent[char]).length ? null : queue;
+        const stack = [];
+        line.forEach(letter => pushOrPopStack(stack, letter));
+        return stack.filter(char => !equivalent[char]).length ? null : stack;
     })
     .filter(i => i)
     .map(incomplete => incomplete
