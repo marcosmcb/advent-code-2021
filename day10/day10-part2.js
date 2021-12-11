@@ -41,9 +41,7 @@ const incompleteLines = navigationSubsytem
         return stack.filter(char => !equivalent[char]).length ? null : stack;
     })
     .filter(i => i)
-    .map(incomplete => incomplete
-        .map(letter => equivalent[letter])
-        .reverse())
+    .map(incomplete => incomplete.map(letter => equivalent[letter]).reverse())
     .map(calculatePoints)
     .sort((a, b) => a - b);
 
